@@ -1,0 +1,16 @@
+# Docker
+.docker/
+*.log
+
+# Database data (if you ever use local folders for volumes)
+data/
+pgdata/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment secrets (for future use)
+.env

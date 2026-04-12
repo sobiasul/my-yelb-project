@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # --- Frontend & App ---
+  yelb-ui:
+    image: mreferre/yelb-ui:0.7
+    ports:
+      - "80:80"
+    networks:
+      - yelb-network
+
+  yelb-appserver:
+    image: mreferre/yelb-appserver:0.5
+    networks:
+      - yelb-network
+    depends_on:
+      - yelb-db
+      - redis-server
+    environment:
+      - REDIS_SERVER_ENDPOINT=redis-server
+      - YELB_DB_ENDPOINT=yelb-db
+
+  # --- Redis Nodes ---
+  redis-server:
+    image: redis:4.0.2
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-server.conf:/etc/redis/redis.conf
+    networks:
+      - yelb-network
+
+  odilia-redis01:
+    image: redis:4.0.2
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    volumes:
+      - ./odilia-redis01.conf:/etc/redis/redis.conf
+    networks:
+      - yelb-network
+
+  odilia-redis02:
+    image: redis:4.0.2
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    volumes:
+      - ./odilia-redis02.conf:/etc/redis/redis.conf
+    networks:
+      - yelb-network
+
+  # --- Sentinels ---
+  odilia-redis-sentinel01:
+    image: redis:4.0.2
+    command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+    networks:
+      - yelb-network
+
+  odilia-redis-sentinel02:
+    image: redis:4.0.2
+    command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+    networks:
+      - yelb-network
+
+  odilia-redis-sentinel03:
+    image: redis:4.0.2
+    command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+    networks:
+      - yelb-network
+
+  # --- Database Layer ---
+  yelb-db:
+    image: mreferre/yelb-db:0.5
+    volumes:
+      - yelb-db-data:/var/lib/postgresql/data
+    networks:
+      - yelb-network
+
+  odilia-db-replication01:
+    image: mreferre/yelb-db:0.5
+    networks:
+      - yelb-network
+
+  odilia-db-replication02:
+    image: mreferre/yelb-db:0.5
+    networks:
+      - yelb-network
+
+  odilia-db-replication03:
+    image: mreferre/yelb-db:0.5
+    networks:
+      - yelb-network
+
+networks:
+  yelb-network:
+    driver: bridge
+
+volumes:
+  yelb-db-data:
+    driver: local
+    
