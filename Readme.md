@@ -63,3 +63,9 @@ Important Checklist Before Running:
 Security Groups: Ensure your AWS Security Group allows inbound traffic on Port 80 (HTTP) and Port 22 (SSH).
 
 Memory: This stack runs 12 containers. Monitor memory usage with docker stats.
+
+Build the container
+
+docker compose up --build
+
+docker compose down
